@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: zillow
+    database: "{{ var('source_database') }}"
+    schema: "{{ var('source_schema') }}"
+    tables:
+      - name: city_home_values
+        description: "Zillow Home Value Index (ZHVI) data for cities"
+      - name: city_rentals
+        description: "Zillow Observed Rent Index (ZORI) data for cities"
+      - name: stg_city_home_values
+        description: "The raw Zillow import data"

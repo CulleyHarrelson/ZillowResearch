@@ -1,0 +1,11 @@
+.DS_Store
+
+data
+logs
+target
+seeds
+.env
+dbt_packages/
+.user.yml
+
+.ipynb_checkpoints/

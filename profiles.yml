@@ -1,0 +1,12 @@
+zillow_research_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "localhost"
+      user: "{{ env_var('DBT_USER') }}"
+      pass: "{{ env_var('DBT_PASS') }}"
+      port: 5432
+      dbname: "zillow_research_dbt"
+      schema: public
+      threads: 4

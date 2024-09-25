@@ -1,0 +1,59 @@
+# dbt_project.yml
+
+name: "zillow_research_dbt"
+version: "1.0.0"
+config-version: 2
+
+profile: "zillow_research_dbt"
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  zillow_research_dbt:
+    +materialized: table
+    city_home_values:
+      +materialized: table
+
+seeds:
+  zillow_research_dbt:
+    +path: data # This tells dbt to look in the data/ directory for seed files
+    city_home_values:
+      +enabled: true
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: string
+        RegionType: string
+        StateName: string
+        State: string
+        Metro: string
+        CountyName: string
+      +delimiter: ","
+      +quote_character: '"'
+    city_rentals:
+      +enabled: true
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: string
+        RegionType: string
+        StateName: string
+        State: string
+        Metro: string
+        CountyName: string
+      +delimiter: ","
+      +quote_character: '"'
+
+vars:
+  source_database: "zillow_research_dbt"
+  source_schema: "public"

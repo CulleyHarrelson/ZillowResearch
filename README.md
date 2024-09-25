@@ -16,9 +16,9 @@ data, including home values and rental prices across various cities in the Unite
 - `models/`: Directory containing SQL models
 - `sources.yml`: Defines the source data tables
 - `macros/`: Directory for custom SQL macros (if any)
-- `seeds/`: Directory for static CSV files (if any)
+- `seeds/`: Place Zillow Research CSV files here
 - `tests/`: Directory for custom data tests
-- `analyses/`: Directory for one-off analytical queries
+- `analyses/`: Directory for one-off analytical queries - have fun!
 
 ## Setup Instructions
 

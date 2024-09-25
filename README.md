@@ -35,7 +35,12 @@ This project uses dbt (data build tool) to transform and analyze Zillow Research
    ```
 
 5. **Load Source Data**:
-   - Load the Zillow Home Value Index (ZHVI) and Zillow Observed Rent Index (ZORI) data into your PostgreSQL database in the `public` schema
+   - Download csv files from [Zillow Research](https://www.zillow.com/research/data/)
+   - Load the Zillow Home Value Index (ZHVI) and Zillow Observed Rent Index (ZORI) data into your PostgreSQL database in the `public` schema with
+
+   ```
+   dbt seed
+   ```
 
 6. **Run dbt**:
    ```

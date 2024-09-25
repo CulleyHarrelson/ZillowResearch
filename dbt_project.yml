@@ -24,6 +24,10 @@ models:
       +materialized: table
     home_value_cities:
       +materialized: view
+    city_rentals:
+      +materialized: table
+    rental_cities:
+      +materialized: view
 
 vars:
   source_database: "zillow_research"

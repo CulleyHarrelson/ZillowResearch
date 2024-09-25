@@ -6,8 +6,6 @@ sources:
     schema: "{{ var('source_schema') }}"
     tables:
       - name: city_home_values
-        description: "Zillow Home Value Index (ZHVI) data for cities"
+        description: "Zillow Home Value Index (ZHVI) data for cities downloaded from https://www.zillow.com/research/data/"
       - name: city_rentals
-        description: "Zillow Observed Rent Index (ZORI) data for cities"
-      - name: stg_city_home_values
-        description: "The raw Zillow import data"
+        description: "Zillow Observed Rent Index (ZORI) data for cities downloaded from https://www.zillow.com/research/data/"

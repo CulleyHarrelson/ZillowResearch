@@ -26,6 +26,14 @@ models:
       +materialized: table
     cities:
       +materialized: table
+    city_metrics:
+      +materialized: table
+    city_size_rank:
+      +materialized: table
+    metros:
+      +materialized: table
+    metro_metrics:
+      +materialized: table
 
 vars:
   source_database: "zillow_research"

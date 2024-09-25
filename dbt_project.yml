@@ -20,14 +20,12 @@ clean-targets:
 
 models:
   zillow_research:
-    city_home_values:
+    home_values_by_city:
       +materialized: table
-    home_value_cities:
-      +materialized: view
-    city_rentals:
+    rentals_by_city:
       +materialized: table
-    rental_cities:
-      +materialized: view
+    cities:
+      +materialized: table
 
 vars:
   source_database: "zillow_research"

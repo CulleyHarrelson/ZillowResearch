@@ -1,4 +1,4 @@
-zillow_research_dbt:
+zillow_research:
   target: dev
   outputs:
     dev:
@@ -7,6 +7,6 @@ zillow_research_dbt:
       user: "{{ env_var('DBT_USER') }}"
       pass: "{{ env_var('DBT_PASS') }}"
       port: 5432
-      dbname: "zillow_research_dbt"
+      dbname: "zillow_research"
       schema: public
       threads: 4

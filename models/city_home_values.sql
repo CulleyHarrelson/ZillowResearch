@@ -1,6 +1,9 @@
 -- depends_on: {{ ref('stg_city_home_values') }}
 {{ config(
-    materialized='table'
+    materialized='table',
+    indexes=[
+        {'columns': ['city_id', 'value_date']}
+    ]
 ) }}
 
 {% set date_columns = get_date_columns() %}

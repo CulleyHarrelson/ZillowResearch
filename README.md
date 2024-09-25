@@ -24,7 +24,7 @@ data, including home values and rental prices across various cities in the Unite
 
 1. **Prerequisites**:
    - Install [dbt](https://docs.getdbt.com/docs/installation)
-   - Set up a PostgreSQL database named `zillow_research`
+   - Set up or connect to a PostgreSQL database named `zillow_research` (modify profiles.yml to change the default database name)
 
 2. **Database Configuration**:
    - Set the following environment variables:

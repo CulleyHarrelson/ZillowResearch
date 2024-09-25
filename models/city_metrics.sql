@@ -38,6 +38,26 @@ year_over_year_changes AS (
             AND home_values.report_year = rentals.report_year
     ) AS combined_values
 ),
+long_term_appreciation AS (
+    SELECT
+        city_id,
+        (MAX(average_home_value) - MIN(average_home_value)) / NULLIF(MIN(average_home_value), 0) * 100 AS home_value_total_appreciation_percent,
+        (MAX(average_rental_value) - MIN(average_rental_value)) / NULLIF(MIN(average_rental_value), 0) * 100 AS rental_value_total_appreciation_percent,
+        MIN(report_year) AS start_year,
+        MAX(report_year) AS end_year
+    FROM (
+        SELECT 
+            COALESCE(home_values.city_id, rentals.city_id) AS city_id,
+            COALESCE(home_values.report_year, rentals.report_year) AS report_year,
+            home_values.average_home_value,
+            rentals.average_rental_value
+        FROM home_values_yearly AS home_values
+        FULL OUTER JOIN rentals_yearly AS rentals 
+            ON home_values.city_id = rentals.city_id 
+            AND home_values.report_year = rentals.report_year
+    ) AS combined_values
+    GROUP BY city_id
+),
 city_metrics AS (
     SELECT
         cities.city_id,
@@ -67,7 +87,11 @@ city_metrics AS (
             AND rentals.average_rental_value != 0
             THEN home_values.average_home_value / (rentals.average_rental_value * 12)
             ELSE NULL 
-        END AS price_to_annual_rent_ratio
+        END AS price_to_annual_rent_ratio,
+        lta.home_value_total_appreciation_percent,
+        lta.rental_value_total_appreciation_percent,
+        lta.start_year AS appreciation_start_year,
+        lta.end_year AS appreciation_end_year
     FROM {{ ref('cities') }} AS cities
     LEFT JOIN home_values_yearly AS home_values ON cities.city_id = home_values.city_id
     LEFT JOIN rentals_yearly AS rentals 
@@ -76,9 +100,11 @@ city_metrics AS (
     LEFT JOIN year_over_year_changes AS year_over_year 
         ON cities.city_id = year_over_year.city_id 
         AND home_values.report_year = year_over_year.report_year
+    LEFT JOIN long_term_appreciation AS lta
+        ON cities.city_id = lta.city_id
     WHERE (home_values.average_home_value IS NOT NULL OR rentals.average_rental_value IS NOT NULL)
-),
-aggregated_metrics AS (
+)
+, aggregated_metrics AS (
     SELECT
         'metro' AS level,
         metro::TEXT AS group_id,
@@ -88,7 +114,11 @@ aggregated_metrics AS (
         AVG(average_rental_value) AS average_rental_value,
         AVG(home_value_year_over_year_change_percent) AS home_value_year_over_year_change_percent,
         AVG(rental_value_year_over_year_change_percent) AS rental_value_year_over_year_change_percent,
-        AVG(price_to_annual_rent_ratio) AS price_to_annual_rent_ratio
+        AVG(price_to_annual_rent_ratio) AS price_to_annual_rent_ratio,
+        AVG(home_value_total_appreciation_percent) AS home_value_total_appreciation_percent,
+        AVG(rental_value_total_appreciation_percent) AS rental_value_total_appreciation_percent,
+        MIN(appreciation_start_year) AS appreciation_start_year,
+        MAX(appreciation_end_year) AS appreciation_end_year
     FROM city_metrics
     WHERE metro IS NOT NULL
     GROUP BY metro, report_year
@@ -104,7 +134,11 @@ aggregated_metrics AS (
         AVG(average_rental_value) AS average_rental_value,
         AVG(home_value_year_over_year_change_percent) AS home_value_year_over_year_change_percent,
         AVG(rental_value_year_over_year_change_percent) AS rental_value_year_over_year_change_percent,
-        AVG(price_to_annual_rent_ratio) AS price_to_annual_rent_ratio
+        AVG(price_to_annual_rent_ratio) AS price_to_annual_rent_ratio,
+        AVG(home_value_total_appreciation_percent) AS home_value_total_appreciation_percent,
+        AVG(rental_value_total_appreciation_percent) AS rental_value_total_appreciation_percent,
+        MIN(appreciation_start_year) AS appreciation_start_year,
+        MAX(appreciation_end_year) AS appreciation_end_year
     FROM city_metrics
     WHERE state IS NOT NULL
     GROUP BY state, report_year
@@ -120,7 +154,11 @@ aggregated_metrics AS (
         AVG(average_rental_value) AS average_rental_value,
         AVG(home_value_year_over_year_change_percent) AS home_value_year_over_year_change_percent,
         AVG(rental_value_year_over_year_change_percent) AS rental_value_year_over_year_change_percent,
-        AVG(price_to_annual_rent_ratio) AS price_to_annual_rent_ratio
+        AVG(price_to_annual_rent_ratio) AS price_to_annual_rent_ratio,
+        AVG(home_value_total_appreciation_percent) AS home_value_total_appreciation_percent,
+        AVG(rental_value_total_appreciation_percent) AS rental_value_total_appreciation_percent,
+        MIN(appreciation_start_year) AS appreciation_start_year,
+        MAX(appreciation_end_year) AS appreciation_end_year
     FROM city_metrics
     WHERE county_name IS NOT NULL
     GROUP BY county_name, report_year
@@ -139,7 +177,11 @@ FROM (
         average_rental_value,
         home_value_year_over_year_change_percent,
         rental_value_year_over_year_change_percent,
-        price_to_annual_rent_ratio
+        price_to_annual_rent_ratio,
+        home_value_total_appreciation_percent,
+        rental_value_total_appreciation_percent,
+        appreciation_start_year,
+        appreciation_end_year
     FROM city_metrics
 
     UNION ALL
@@ -156,7 +198,11 @@ FROM (
         average_rental_value,
         home_value_year_over_year_change_percent,
         rental_value_year_over_year_change_percent,
-        price_to_annual_rent_ratio
+        price_to_annual_rent_ratio,
+        home_value_total_appreciation_percent,
+        rental_value_total_appreciation_percent,
+        appreciation_start_year,
+        appreciation_end_year
     FROM aggregated_metrics
 ) AS combined_data
 ORDER BY 
@@ -168,3 +214,4 @@ ORDER BY
     END,
     group_name, 
     report_year
+

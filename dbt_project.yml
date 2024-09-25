@@ -32,6 +32,8 @@ models:
       +materialized: table
     metros:
       +materialized: table
+    correlation_analysis:
+      +materialized: table
 
 vars:
   source_database: "zillow_research"

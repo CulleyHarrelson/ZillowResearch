@@ -26,6 +26,8 @@ data, including home values and rental prices across various cities in the Unite
    - Install [dbt](https://docs.getdbt.com/docs/installation)
    - Set up or connect to a PostgreSQL database named `zillow_research` (modify profiles.yml to change the default database name)
 
+[How to Use the Postgres Docker Official Image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/)
+
 2. **Database Configuration**:
    - Set the following environment variables:
      ```
@@ -53,62 +55,52 @@ data, including home values and rental prices across various cities in the Unite
    ```
    dbt run
    ```
-
 ## Metrics and Models
+
+This project includes two main analytical models: `city_metrics` and `correlation_analysis`.
+
+### City Metrics Model
 
 The `city_metrics` model is the core of this project, calculating various real estate metrics at different geographic levels: city, county, metro, and state. Here's a comprehensive list of all metrics and dimensions included in the model:
 
-### Dimensions:
+[... keep the existing content for city_metrics ...]
+
+### Correlation Analysis Model
+
+The `correlation_analysis` model provides insights into the relationship between home values and rental prices across different geographic levels and time periods.
+
+#### Dimensions:
 
 1. **Level**: Indicates the geographic level of aggregation (city, county, metro, or state)
-2. **Group ID**: A unique identifier for each geographic entity (city_id for cities, name for other levels)
-3. **Group Name**: The name of the geographic entity (city name, county name, metro name, or state name)
-4. **State**: The state of the city (only for city level)
-5. **Metro**: The metropolitan area of the city (for city level, or when level is metro)
-6. **County Name**: The county of the city (for city level, or when level is county)
-7. **Report Year**: The year for which the metrics are calculated
+2. **Group ID**: A unique identifier for each geographic entity
+3. **Group Name**: The name of the geographic entity
+4. **State**: The state of the entity (where applicable)
+5. **Metro**: The metropolitan area of the entity (where applicable)
+6. **County Name**: The county of the entity (where applicable)
+7. **Report Year**: The year for which the correlations are calculated
 
-### Metrics:
+#### Metrics:
 
-1. **Average Home Value**: The average Zillow Home Value Index (ZHVI) for each geographic level and year.
+1. **Group Home-Rental Correlation**: The correlation coefficient between home values and rental prices for each geographic entity over all available years. This metric indicates the strength and direction of the relationship between home values and rental prices within each geographic area.
 
-2. **Average Rental Value**: The average Zillow Observed Rent Index (ZORI) for each geographic level and year.
-
-3. **Home Value Year-over-Year Change Percent**: The percentage change in home values compared to the previous year. Calculated as:
-   ```
-   (Current Year Home Value - Previous Year Home Value) / Previous Year Home Value * 100
-   ```
-
-4. **Rental Value Year-over-Year Change Percent**: The percentage change in rental values compared to the previous year. Calculated as:
-   ```
-   (Current Year Rental Value - Previous Year Rental Value) / Previous Year Rental Value * 100
-   ```
-
-5. **Price-to-Annual-Rent Ratio**: The ratio of the average home value to the annual rental value. Calculated as:
-   ```
-   Average Home Value / (Average Rental Value * 12)
-   ```
-   This metric can indicate whether it's financially better to buy or rent in a particular area. A lower ratio suggests it might be more favorable to buy, while a higher ratio might favor renting.
+2. **Yearly Home-Rental Correlation**: The correlation coefficient between home values and rental prices across all entities within a geographic level for each year. This metric shows how the relationship between home values and rental prices changes over time at each geographic level.
 
 ### Data Sources and Transformations:
 
-The `city_metrics` model performs the following transformations on the source data:
+The `correlation_analysis` model performs the following transformations:
 
-1. Aggregates home values and rental values to yearly averages from the source tables:
-   - `home_values_by_city`: Contains the Zillow Home Value Index (ZHVI) data
-   - `rentals_by_city`: Contains the Zillow Observed Rent Index (ZORI) data
+1. Uses the `city_metrics` model as its data source, ensuring consistent data across models.
+2. Calculates correlations between home values and rental prices for each geographic entity (city, county, metro, state) over all available years.
+3. Computes yearly correlations between home values and rental prices for each geographic level.
+4. Combines entity-level and yearly correlations into a single output table for easy analysis.
 
-2. Joins the aggregated data with the `cities` table to include geographic information (state, metro, county)
+This model allows for in-depth analysis of how home values and rental prices relate to each other across different geographic scales and over time. It can provide valuable insights into housing market dynamics, such as:
 
-3. Calculates year-over-year changes for both home values and rental values
+- Identifying areas where home values and rental prices move in tandem or diverge
+- Analyzing how the relationship between home values and rents changes over time in different geographic areas
+- Comparing the strength of the home value-rent relationship across different cities, counties, metros, or states
 
-4. Computes the price-to-annual-rent ratio
-
-5. Aggregates all metrics at the city, county, metro, and state levels
-
-6. Combines all geographic levels into a single output table, with the 'level' column indicating the level of aggregation
-
-This comprehensive model allows for analysis and comparison of real estate trends across different geographic levels and time periods, providing valuable insights into housing markets across the United States.
+By combining insights from both the `city_metrics` and `correlation_analysis` models, users can gain a comprehensive understanding of real estate trends and relationships across the United States.
 
 ## Running Tests
 

@@ -28,11 +28,9 @@ models:
       +materialized: table
     city_metrics:
       +materialized: table
-    city_size_rank:
+    states:
       +materialized: table
     metros:
-      +materialized: table
-    metro_metrics:
       +materialized: table
 
 vars:

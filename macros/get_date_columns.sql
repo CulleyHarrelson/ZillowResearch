@@ -1,4 +1,4 @@
-{% macro get_city_home_values_date_columns() %}
+{% macro get_region_home_values_date_columns() %}
   {% set date_columns_query %}
     SELECT column_name
     FROM information_schema.columns
@@ -18,7 +18,7 @@
   {{ return(date_columns) }}
 {% endmacro %}
 
-{% macro get_city_rentals_date_columns() %}
+{% macro get_region_rentals_date_columns() %}
   {% set date_columns_query %}
     SELECT column_name
     FROM information_schema.columns

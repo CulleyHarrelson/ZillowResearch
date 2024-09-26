@@ -1,7 +1,5 @@
-# dbt_project.yml
-
 name: "zillow_research"
-version: "1.0.0"
+version: "2.0.0"
 config-version: 2
 
 profile: "zillow_research"
@@ -20,21 +18,76 @@ clean-targets:
 
 models:
   zillow_research:
-    home_values_by_city:
+    staging:
+      +materialized: view
+      +schema: stg
+    intermediate:
       +materialized: table
-    rentals_by_city:
+      +schema: int
+    marts:
       +materialized: table
-    cities:
-      +materialized: table
-    city_metrics:
-      +materialized: table
-    states:
-      +materialized: table
-    metros:
-      +materialized: table
-    correlation_analysis:
-      +materialized: table
+      +schema: mart
+
+seeds:
+  zillow_research:
+    +schema: raw_data
+    region_home_values_raw:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_home_values_smooth:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_home_values_tiers:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_home_values_property_types:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_home_value_forecasts_raw:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_home_value_forecasts_smooth:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_rentals:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
+    region_renter_demand:
+      +column_types:
+        RegionID: integer
+        SizeRank: integer
+        RegionName: varchar
+        RegionType: varchar
+        StateName: varchar
 
 vars:
   source_database: "zillow_research"
-  source_schema: "public"
+  source_schema: "raw_data"

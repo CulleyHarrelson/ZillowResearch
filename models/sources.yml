@@ -1,11 +1,23 @@
 version: 2
 
 sources:
-  - name: zillow
+  - name: zillow_research
     database: "{{ var('source_database') }}"
     schema: "{{ var('source_schema') }}"
     tables:
-      - name: home_values_by_city
-        description: "Zillow Home Value Index (ZHVI) data for cities downloaded from https://www.zillow.com/research/data/"
-      - name: rentals_by_city
-        description: "Zillow Observed Rent Index (ZORI) data for cities downloaded from https://www.zillow.com/research/data/"
+      - name: region_home_values_raw
+        description: "Raw Zillow Home Value Index (ZHVI) data for regions"
+      - name: region_home_values_smooth
+        description: "Smoothed, seasonally adjusted Zillow Home Value Index (ZHVI) data for regions"
+      - name: region_home_values_tiers
+        description: "Zillow Home Value Index (ZHVI) data for different tiers (top and bottom) for regions"
+      - name: region_home_values_property_types
+        description: "Zillow Home Value Index (ZHVI) data for different property types in regions"
+      - name: region_home_value_forecasts_raw
+        description: "Raw Zillow Home Value Forecast (ZHVF) data for regions"
+      - name: region_home_value_forecasts_smooth
+        description: "Smoothed, seasonally adjusted Zillow Home Value Forecast (ZHVF) data for regions"
+      - name: region_rentals
+        description: "Zillow Observed Rent Index (ZORI) data for regions"
+      - name: region_renter_demand
+        description: "Zillow Observed Renter Demand Index (ZORDI) data for regions"

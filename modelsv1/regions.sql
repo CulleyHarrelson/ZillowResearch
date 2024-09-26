@@ -1,17 +1,17 @@
 {{ config(materialized='table') }}
 
 SELECT DISTINCT
-    city_id,
+    region_id,
     size_rank,
-    city_name,
+    region_name,
     state,
     metro,
     county_name
 FROM (
     SELECT DISTINCT 
-        "RegionID" AS city_id,
+        "RegionID" AS region_id,
         "SizeRank" AS size_rank,
-        "RegionName" AS city_name,
+        "RegionName" AS region_name,
         "State" AS state,
         "Metro" AS metro,
         "CountyName" AS county_name
@@ -20,9 +20,9 @@ FROM (
     UNION ALL
 
     SELECT DISTINCT 
-        "RegionID" AS city_id,
+        "RegionID" AS region_id,
         "SizeRank" AS size_rank,
-        "RegionName" AS city_name,
+        "RegionName" AS region_name,
         "State" AS state,
         "Metro" AS metro,
         "CountyName" AS county_name

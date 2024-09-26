@@ -2,69 +2,69 @@
 
 WITH home_values_yearly AS (
     SELECT
-        city_id,
+        region_id,
         EXTRACT(YEAR FROM value_date)::INTEGER AS report_year,
         AVG(home_value) AS average_home_value
-    FROM {{ ref('home_values_by_city') }}
+    FROM {{ ref('home_values_by_region') }}
     WHERE home_value IS NOT NULL
-    GROUP BY city_id, EXTRACT(YEAR FROM value_date)::INTEGER
+    GROUP BY region_id, EXTRACT(YEAR FROM value_date)::INTEGER
 ),
 rentals_yearly AS (
     SELECT
-        city_id,
+        region_id,
         EXTRACT(YEAR FROM value_date)::INTEGER AS report_year,
         AVG(rental_value) AS average_rental_value
-    FROM {{ ref('rentals_by_city') }}
+    FROM {{ ref('rentals_by_region') }}
     WHERE rental_value IS NOT NULL
-    GROUP BY city_id, EXTRACT(YEAR FROM value_date)::INTEGER
+    GROUP BY region_id, EXTRACT(YEAR FROM value_date)::INTEGER
 ),
 year_over_year_changes AS (
     SELECT
-        city_id,
+        region_id,
         report_year,
         average_home_value,
-        LAG(average_home_value) OVER (PARTITION BY city_id ORDER BY report_year) AS previous_year_home_value,
+        LAG(average_home_value) OVER (PARTITION BY region_id ORDER BY report_year) AS previous_year_home_value,
         average_rental_value,
-        LAG(average_rental_value) OVER (PARTITION BY city_id ORDER BY report_year) AS previous_year_rental_value
+        LAG(average_rental_value) OVER (PARTITION BY region_id ORDER BY report_year) AS previous_year_rental_value
     FROM (
         SELECT 
-            COALESCE(home_values.city_id, rentals.city_id) AS city_id,
+            COALESCE(home_values.region_id, rentals.region_id) AS region_id,
             COALESCE(home_values.report_year, rentals.report_year) AS report_year,
             home_values.average_home_value,
             rentals.average_rental_value
         FROM home_values_yearly AS home_values
         FULL OUTER JOIN rentals_yearly AS rentals 
-            ON home_values.city_id = rentals.city_id 
+            ON home_values.region_id = rentals.region_id 
             AND home_values.report_year = rentals.report_year
     ) AS combined_values
 ),
 long_term_appreciation AS (
     SELECT
-        city_id,
+        region_id,
         (MAX(average_home_value) - MIN(average_home_value)) / NULLIF(MIN(average_home_value), 0) * 100 AS home_value_total_appreciation_percent,
         (MAX(average_rental_value) - MIN(average_rental_value)) / NULLIF(MIN(average_rental_value), 0) * 100 AS rental_value_total_appreciation_percent,
         MIN(report_year) AS start_year,
         MAX(report_year) AS end_year
     FROM (
         SELECT 
-            COALESCE(home_values.city_id, rentals.city_id) AS city_id,
+            COALESCE(home_values.region_id, rentals.region_id) AS region_id,
             COALESCE(home_values.report_year, rentals.report_year) AS report_year,
             home_values.average_home_value,
             rentals.average_rental_value
         FROM home_values_yearly AS home_values
         FULL OUTER JOIN rentals_yearly AS rentals 
-            ON home_values.city_id = rentals.city_id 
+            ON home_values.region_id = rentals.region_id 
             AND home_values.report_year = rentals.report_year
     ) AS combined_values
-    GROUP BY city_id
+    GROUP BY region_id
 ),
-city_metrics AS (
+region_metrics AS (
     SELECT
-        cities.city_id,
-        cities.city_name,
-        cities.state,
-        cities.metro,
-        cities.county_name,
+        regions.region_id,
+        regions.region_name,
+        regions.state,
+        regions.metro,
+        regions.county_name,
         home_values.report_year,
         home_values.average_home_value,
         rentals.average_rental_value,
@@ -92,16 +92,16 @@ city_metrics AS (
         lta.rental_value_total_appreciation_percent,
         lta.start_year AS appreciation_start_year,
         lta.end_year AS appreciation_end_year
-    FROM {{ ref('cities') }} AS cities
-    LEFT JOIN home_values_yearly AS home_values ON cities.city_id = home_values.city_id
+    FROM {{ ref('regions') }} AS regions
+    LEFT JOIN home_values_yearly AS home_values ON regions.region_id = home_values.region_id
     LEFT JOIN rentals_yearly AS rentals 
-        ON cities.city_id = rentals.city_id 
+        ON regions.region_id = rentals.region_id 
         AND home_values.report_year = rentals.report_year
     LEFT JOIN year_over_year_changes AS year_over_year 
-        ON cities.city_id = year_over_year.city_id 
+        ON regions.region_id = year_over_year.region_id 
         AND home_values.report_year = year_over_year.report_year
     LEFT JOIN long_term_appreciation AS lta
-        ON cities.city_id = lta.city_id
+        ON regions.region_id = lta.region_id
     WHERE (home_values.average_home_value IS NOT NULL OR rentals.average_rental_value IS NOT NULL)
 )
 , aggregated_metrics AS (
@@ -119,7 +119,7 @@ city_metrics AS (
         AVG(rental_value_total_appreciation_percent) AS rental_value_total_appreciation_percent,
         MIN(appreciation_start_year) AS appreciation_start_year,
         MAX(appreciation_end_year) AS appreciation_end_year
-    FROM city_metrics
+    FROM region_metrics
     WHERE metro IS NOT NULL
     GROUP BY metro, report_year
 
@@ -139,7 +139,7 @@ city_metrics AS (
         AVG(rental_value_total_appreciation_percent) AS rental_value_total_appreciation_percent,
         MIN(appreciation_start_year) AS appreciation_start_year,
         MAX(appreciation_end_year) AS appreciation_end_year
-    FROM city_metrics
+    FROM region_metrics
     WHERE state IS NOT NULL
     GROUP BY state, report_year
 
@@ -159,16 +159,16 @@ city_metrics AS (
         AVG(rental_value_total_appreciation_percent) AS rental_value_total_appreciation_percent,
         MIN(appreciation_start_year) AS appreciation_start_year,
         MAX(appreciation_end_year) AS appreciation_end_year
-    FROM city_metrics
+    FROM region_metrics
     WHERE county_name IS NOT NULL
     GROUP BY county_name, report_year
 )
 SELECT *
 FROM (
     SELECT
-        'city' AS level,
-        city_id::TEXT AS group_id,
-        city_name AS group_name,
+        'region' AS level,
+        region_id::TEXT AS group_id,
+        region_name AS group_name,
         state,
         metro,
         county_name,
@@ -182,7 +182,7 @@ FROM (
         rental_value_total_appreciation_percent,
         appreciation_start_year,
         appreciation_end_year
-    FROM city_metrics
+    FROM region_metrics
 
     UNION ALL
 
@@ -207,11 +207,10 @@ FROM (
 ) AS combined_data
 ORDER BY 
     CASE 
-        WHEN level = 'city' THEN 1 
+        WHEN level = 'region' THEN 1 
         WHEN level = 'county' THEN 2
         WHEN level = 'metro' THEN 3
         WHEN level = 'state' THEN 4
     END,
     group_name, 
     report_year
-

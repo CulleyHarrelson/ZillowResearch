@@ -7,5 +7,6 @@ seeds
 .env
 dbt_packages/
 .user.yml
+test.sql
 
 .ipynb_checkpoints/

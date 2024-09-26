@@ -1,10 +1,10 @@
-{% macro star_column_group(from, include_dates=False) %}
+{% macro star_column_group(from, dates=False) %}
     {%- set include_cols = [] %}
     
     {%- set cols = adapter.get_columns_in_relation(from) %}
     
     {%- for col in cols -%}
-        {%- if include_dates -%}
+        {%- if dates -%}
             {%- if modules.re.match('^\\d{4}-\\d{2}-\\d{2}$', col.name) -%}
                 {%- do include_cols.append(col.name) %}
             {%- endif %}

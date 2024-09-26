@@ -1,7 +1,5 @@
 {{ config(materialized='table') }}
 
-{{ config(materialized='table') }}
-
 WITH unioned_data AS (
     {{ dbt_utils.union_relations(
         relations=[

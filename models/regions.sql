@@ -5,10 +5,8 @@ WITH unioned_data AS (
         relations=[
             ref('stg_region_home_value_forecasts_raw'),
             ref('stg_region_home_value_forecasts_smooth'),
-            ref('stg_region_home_values_property_types'),
             ref('stg_region_home_values_raw'),
             ref('stg_region_home_values_smooth'),
-            ref('stg_region_home_values_tiers'),
             ref('stg_region_rentals'),
             ref('stg_region_renter_demand')
         ],

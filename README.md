@@ -9,27 +9,16 @@ data, including home values and rental prices across various cities in the Unite
 
 [ZHVI User Guide](https://www.zillow.com/research/zhvi-user-guide/)
 
-## Project Structure
-
-- `dbt_project.yml`: Main configuration file for the dbt project
-- `profiles.yml`: Contains database connection information
-- `models/`: Directory containing SQL models
-- `sources.yml`: Defines the source data tables
-- `macros/`: Directory for custom SQL macros (if any)
-- `seeds/`: Place Zillow Research CSV files here
-- `tests/`: Directory for custom data tests
-- `analyses/`: Directory for one-off analytical queries - have fun!
-
 ## Setup Instructions
 
 1. **Prerequisites**:
    - Install [dbt](https://docs.getdbt.com/docs/installation)
-   - Set up or connect to a PostgreSQL database named `zillow_research` (modify profiles.yml to change the default database name)
+   - Install PostgreSQL (or devise alternative)
 
 [How to Use the Postgres Docker Official Image](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/)
 
 2. **Database Configuration**:
-   - Set the following environment variables:
+   - Create a .env file containing:
      ```
      export DBT_USER=your_database_user
      export DBT_PASS=your_database_password
@@ -44,12 +33,9 @@ data, including home values and rental prices across various cities in the Unite
    ```
 
 5. **Load Source Data**:
-   - Download csv files from [Zillow Research](https://www.zillow.com/research/data/)
-   - Load the Zillow Home Value Index (ZHVI) and Zillow Observed Rent Index (ZORI) data into your PostgreSQL database in the `public` schema with
-
-   ```
-   dbt seed
-   ```
+   - Download csv files from [Zillow Research](https://www.zillow.com/research/data/) and place in the data/ directory
+   - execute scripts/create_sym_links.sh or equivalent to normalize raw table names - Postgresql does not like to have . in table names.
+   - execute scripts/build_raw_db.py to (re)build the zillow_research PostgreSQL database and load the raw csv files
 
 6. **Run dbt**:
    ```
@@ -58,8 +44,9 @@ data, including home values and rental prices across various cities in the Unite
 
 ## models
 
-- models beginning with int_region are views scrubbing the column names for Postgres
-- models beginning with int_pivot_region are tables unpivoting the Zillow source csv data
+- models beginning with stg_region are views scrubbing the column names for Postgres
+- models beginning with int_region are tables unpivoting the Zillow source csv data
 - region.sql creates a distinct list of regions
+- More soon!
 
 

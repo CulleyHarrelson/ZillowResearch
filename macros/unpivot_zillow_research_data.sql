@@ -1,4 +1,4 @@
-{% macro unpivot_values(table_name) %}
+{% macro unpivot_zillow_research_data(table_name) %}
 {%- set relation = ref(table_name) -%}
 {%- set columns = adapter.get_columns_in_relation(relation) -%}
 {%- set column_names = dbt_utils.get_filtered_columns_in_relation(

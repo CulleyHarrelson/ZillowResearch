@@ -18,39 +18,31 @@ clean-targets:
 
 models:
   zillow_research:
-    # Staging models
-    +materialized: view
-    stg_region_home_value_forecasts_raw:
+    staging:
       +materialized: view
-    stg_region_home_value_forecasts_smooth:
-      +materialized: view
-    stg_region_home_values_raw:
-      +materialized: view
-    stg_region_home_values_smooth:
-      +materialized: view
-    stg_region_rentals:
-      +materialized: view
-    stg_region_renter_demand:
-      +materialized: view
+      stg_region_home_value_forecasts_raw:
+      stg_region_home_value_forecasts_smooth:
+      stg_region_home_values_raw:
+      stg_region_home_values_smooth:
+      stg_region_rentals:
+      stg_region_renter_demand:
 
-    # Intermediate models
-    +materialized: table
-    int_region_home_value_forecasts_raw:
+    intermediate:
       +materialized: table
-    int_region_home_value_forecasts_smooth:
-      +materialized: table
-    int_region_home_values_raw:
-      +materialized: table
-    int_region_home_values_smooth:
-      +materialized: table
-    int_region_rentals:
-      +materialized: table
-    int_region_renter_demand:
-      +materialized: table
+      int_region_home_value_forecasts_raw:
+      int_region_home_value_forecasts_smooth:
+      int_region_home_values_raw:
+      int_region_home_values_smooth:
+      int_region_rentals:
+      int_region_renter_demand:
 
-    # Final models
-    regions:
+    marts:
       +materialized: table
+      marts_region_home_values_raw:
+      marts_region_home_values_smooth:
+      marts_region_rental_prices:
+      mart_region_price_to_rent_ratio:
+      regions:
 
 vars:
   source_database: "zillow_research"

@@ -16,6 +16,42 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+models:
+  zillow_research:
+    # Staging models
+    +materialized: view
+    stg_region_home_value_forecasts_raw:
+      +materialized: view
+    stg_region_home_value_forecasts_smooth:
+      +materialized: view
+    stg_region_home_values_raw:
+      +materialized: view
+    stg_region_home_values_smooth:
+      +materialized: view
+    stg_region_rentals:
+      +materialized: view
+    stg_region_renter_demand:
+      +materialized: view
+
+    # Intermediate models
+    +materialized: table
+    int_region_home_value_forecasts_raw:
+      +materialized: table
+    int_region_home_value_forecasts_smooth:
+      +materialized: table
+    int_region_home_values_raw:
+      +materialized: table
+    int_region_home_values_smooth:
+      +materialized: table
+    int_region_rentals:
+      +materialized: table
+    int_region_renter_demand:
+      +materialized: table
+
+    # Final models
+    regions:
+      +materialized: table
+
 vars:
   source_database: "zillow_research"
   dbt_utils_dispatch_list: ["dbt_utils"]

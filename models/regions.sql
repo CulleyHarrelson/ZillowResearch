@@ -12,19 +12,19 @@ WITH unioned_data AS (
         ],
         source_column_name=None,
         include=[
-            "RegionID",
-            "SizeRank",
-            "RegionName",
-            "RegionType",
-            "StateName"
+            "region_id",
+            "size_rank",
+            "region_name",
+            "region_type",
+            "state_name"
         ]
     ) }}
 )
 
 SELECT DISTINCT
-    "RegionID" as region_id,
-    "SizeRank" as size_rank,
-    "RegionName" as region_name,
-    "RegionType" as region_type,
-    "StateName" as state_name
+    region_id,
+    size_rank,
+    region_name,
+    region_type,
+    state_name
 FROM unioned_data

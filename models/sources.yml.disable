@@ -1,9 +1,8 @@
 version: 2
 
 sources:
-  - name: zillow_research
+  - name: zillow_research_csv_files
     database: "{{ var('source_database') }}"
-    schema: "{{ var('source_schema') }}"
     tables:
       - name: stg_region_home_values_raw
         description: "Raw Zillow Home Value Index (ZHVI) data for regions"

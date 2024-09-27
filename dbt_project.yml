@@ -16,19 +16,6 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-models:
-  zillow_research:
-    staging:
-      +materialized: view
-      +schema: stg
-    intermediate:
-      +materialized: table
-      +schema: int
-    marts:
-      +materialized: table
-      +schema: mart
-
 vars:
   source_database: "zillow_research"
-  source_schema: "raw_data"
   dbt_utils_dispatch_list: ["dbt_utils"]

@@ -1,6 +1,6 @@
 WITH rentals AS (
     SELECT *
-    FROM {{ ref('int_region_rentals') }}
+    FROM {{ ref('int_region_rentals_pivoted') }}
 ),
 
 size_rank_stats AS (

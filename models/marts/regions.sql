@@ -3,10 +3,10 @@
 WITH unioned_data AS (
     {{ dbt_utils.union_relations(
         relations=[
-            ref('stg_region_home_value_forecasts'),
-            ref('stg_region_home_values'),
-            ref('stg_region_rentals'),
-            ref('stg_region_renter_demand')
+            ref('int_region_home_value_forecasts_pivoted'),
+            ref('int_region_home_values_pivoted'),
+            ref('int_region_rentals_pivoted'),
+            ref('int_region_renter_demand_pivoted')
         ],
         source_column_name=None,
         include=[

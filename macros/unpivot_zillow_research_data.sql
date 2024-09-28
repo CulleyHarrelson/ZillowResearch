@@ -1,11 +1,22 @@
 {% macro unpivot_zillow_research_data(table_name) %}
-{%- set relation = ref(table_name) -%}
-{%- set columns = adapter.get_columns_in_relation(relation) -%}
+
+{%- set source_table = source('raw', table_name) -%}
+{%- set columns = adapter.get_columns_in_relation(source_table) -%}
 {%- set column_names = dbt_utils.get_filtered_columns_in_relation(
-    from=relation,
-    except=["region_id", "size_rank", "region_name", "region_type", "state_name", "base_date"]
+    from=source_table,
+    except=["RegionID", "SizeRank", "RegionName", "RegionType", "StateName"]
 ) -%}
-{%- set base_date_exists = 'base_date' in columns | map(attribute='name') -%}
+
+WITH stg_data AS (
+    SELECT DISTINCT
+        "RegionID" as region_id,
+        "SizeRank" as size_rank,
+        "RegionName" as region_name,
+        "RegionType" as region_type,
+        "StateName" as state_name,
+        {{ dbt_utils.star(from=source_table, except=["RegionID", "SizeRank", "RegionName", "RegionType", "StateName"]) }}
+    FROM {{ source_table }}
+)
 
 {% for column in column_names %}
     select
@@ -14,12 +25,9 @@
         region_name,
         region_type,
         state_name,
-        {% if base_date_exists %}
-        base_date,
-        {% endif %}
         '{{ column }}' as metric_date,
         "{{ column }}" as metric_value
-    from {{ relation }}
+    from stg_data
     {% if not loop.last %}
     UNION ALL
     {% endif %}

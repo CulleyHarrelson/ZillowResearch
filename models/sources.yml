@@ -1,10 +1,8 @@
 sources:
   - name: raw
     tables:
-      - name: region_home_value_forecasts_raw
-      - name: region_home_value_forecasts_smooth
-      - name: region_home_values_raw
-      - name: region_home_values_smooth
+      - name: region_home_value_forecasts
+      - name: region_home_values
       - name: region_rentals
       - name: region_renter_demand
       - name: region_home_values_property_types

@@ -1,6 +1,6 @@
 WITH home_values AS (
     SELECT *
-    FROM {{ ref('region_home_values_raw') }}
+    FROM {{ ref('region_home_values') }}
 ),
 
 rentals AS (
@@ -15,20 +15,20 @@ combined_data AS (
         hv.region_type,
         hv.state_name,
         hv.size_rank,
-        hv.month,
+        hv.metric_date,
         hv.avg_home_value,
         r.avg_rental_price * 12 AS annual_rental_price,
         hv.mom_growth_rate AS home_value_mom_growth,
         r.mom_growth_rate AS rental_price_mom_growth,
         hv.city_size_category
     FROM home_values hv
-    INNER JOIN rentals r ON hv.region_id = r.region_id AND hv.month = r.month
+    INNER JOIN rentals r ON hv.region_id = r.region_id AND hv.metric_date = r.metric_date
 ),
 
 yearly_metrics AS (
     SELECT
         region_id,
-        DATE_TRUNC('year', month) AS year,
+        DATE_TRUNC('year', metric_date) AS year,
         AVG(avg_home_value) AS yearly_avg_home_value,
         AVG(annual_rental_price) AS yearly_avg_rental_price,
         (MAX(avg_home_value) - MIN(avg_home_value)) / NULLIF(MIN(avg_home_value), 0) AS home_value_yearly_volatility,
@@ -49,8 +49,8 @@ long_term_trends AS (
 SELECT
     cd.*,
     cd.avg_home_value / NULLIF(cd.annual_rental_price, 0) AS price_to_rent_ratio,
-    AVG(cd.avg_home_value / NULLIF(cd.annual_rental_price, 0)) OVER (PARTITION BY cd.state_name, DATE_TRUNC('year', cd.month)) AS state_avg_price_to_rent_ratio,
-    AVG(cd.avg_home_value / NULLIF(cd.annual_rental_price, 0)) OVER (PARTITION BY DATE_TRUNC('year', cd.month)) AS national_avg_price_to_rent_ratio,
+    AVG(cd.avg_home_value / NULLIF(cd.annual_rental_price, 0)) OVER (PARTITION BY cd.state_name, DATE_TRUNC('year', cd.metric_date)) AS state_avg_price_to_rent_ratio,
+    AVG(cd.avg_home_value / NULLIF(cd.annual_rental_price, 0)) OVER (PARTITION BY DATE_TRUNC('year', cd.metric_date)) AS national_avg_price_to_rent_ratio,
     (cd.home_value_mom_growth - cd.rental_price_mom_growth) AS monthly_growth_difference,
     ym.home_value_yearly_volatility,
     ym.rental_price_yearly_volatility,
@@ -58,5 +58,5 @@ SELECT
     lt.rental_price_total_appreciation,
     (lt.home_value_total_appreciation - lt.rental_price_total_appreciation) AS long_term_appreciation_difference
 FROM combined_data cd
-LEFT JOIN yearly_metrics ym ON cd.region_id = ym.region_id AND DATE_TRUNC('year', cd.month) = ym.year
+LEFT JOIN yearly_metrics ym ON cd.region_id = ym.region_id AND DATE_TRUNC('year', cd.metric_date) = ym.year
 LEFT JOIN long_term_trends lt ON cd.region_id = lt.region_id

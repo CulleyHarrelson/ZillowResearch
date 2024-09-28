@@ -1,6 +1,6 @@
 WITH home_values AS (
     SELECT *
-    FROM {{ ref('int_region_home_values_smooth') }}
+    FROM {{ ref('int_region_home_values') }}
 ),
 
 size_rank_stats AS (

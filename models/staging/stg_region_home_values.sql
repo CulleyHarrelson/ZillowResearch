@@ -6,5 +6,5 @@ SELECT DISTINCT
     "RegionName" as region_name,
     "RegionType" as region_type,
     "StateName" as state_name,
-    {{ dbt_utils.star(from=source('raw', 'region_home_values_raw'), except=["RegionID", "SizeRank", "RegionName", "RegionType", "StateName"]) }}
-FROM {{ source('raw', 'region_home_values_raw') }}
+    {{ dbt_utils.star(from=source('raw', 'region_home_values'), except=["RegionID", "SizeRank", "RegionName", "RegionType", "StateName"]) }}
+FROM {{ source('raw', 'region_home_values') }}

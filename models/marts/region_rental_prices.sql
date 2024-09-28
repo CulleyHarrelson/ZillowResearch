@@ -18,7 +18,7 @@ metrics AS (
         region_name,
         region_type,
         state_name,
-        DATE_TRUNC('month', CAST(metric_date AS DATE)) AS month,
+        DATE_TRUNC('month', CAST(metric_date AS DATE)) AS metric_month,
         AVG(CAST(metric_value AS FLOAT)) AS avg_rental_price,
         LAG(AVG(CAST(metric_value AS FLOAT))) OVER (PARTITION BY region_id ORDER BY DATE_TRUNC('month', CAST(metric_date AS DATE))) AS prev_month_avg_rental_price,
         MIN(CAST(metric_value AS FLOAT)) AS min_rental_price,
@@ -37,7 +37,7 @@ monthly_growth AS (
 yearly_metrics AS (
     SELECT
         region_id,
-        DATE_TRUNC('year', month) AS year,
+        DATE_TRUNC('year', metric_month) AS year,
         AVG(avg_rental_price) AS yearly_avg_rental_price,
         MIN(avg_rental_price) AS yearly_min_rental_price,
         MAX(avg_rental_price) AS yearly_max_rental_price,
@@ -58,7 +58,7 @@ long_term_trends AS (
 seasonal_analysis AS (
     SELECT
         region_id,
-        EXTRACT(MONTH FROM month) AS month_number,
+        EXTRACT(MONTH FROM metric_month) AS month_number,
         AVG(avg_rental_price) AS avg_monthly_rental_price
     FROM metrics
     GROUP BY 1, 2
@@ -81,8 +81,8 @@ SELECT
         ELSE 'Small'
     END AS city_size_category
 FROM metrics m
-LEFT JOIN monthly_growth mg ON m.region_id = mg.region_id AND m.month = mg.month
-LEFT JOIN yearly_metrics ym ON m.region_id = ym.region_id AND DATE_TRUNC('year', m.month) = ym.year
+LEFT JOIN monthly_growth mg ON m.region_id = mg.region_id AND m.metric_month = mg.metric_month
+LEFT JOIN yearly_metrics ym ON m.region_id = ym.region_id AND DATE_TRUNC('year', m.metric_month) = ym.year
 LEFT JOIN long_term_trends lt ON m.region_id = lt.region_id
-LEFT JOIN seasonal_analysis sa ON m.region_id = sa.region_id AND EXTRACT(MONTH FROM m.month) = sa.month_number
+LEFT JOIN seasonal_analysis sa ON m.region_id = sa.region_id AND EXTRACT(MONTH FROM m.metric_month) = sa.month_number
 CROSS JOIN size_rank_stats s

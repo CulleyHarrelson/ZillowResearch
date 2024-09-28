@@ -18,7 +18,7 @@ metrics AS (
         region_name,
         region_type,
         state_name,
-        DATE_TRUNC('year', CAST(metric_date AS DATE)) AS year,
+        DATE_TRUNC('year', CAST(metric_date AS DATE)) AS metric_year,
         AVG(CAST(metric_value AS FLOAT)) AS avg_home_value,
         LAG(AVG(CAST(metric_value AS FLOAT))) OVER (PARTITION BY region_id ORDER BY DATE_TRUNC('year', CAST(metric_date AS DATE))) AS prev_year_avg_home_value,
         MIN(CAST(metric_value AS FLOAT)) AS min_home_value,
@@ -57,6 +57,6 @@ SELECT
         ELSE 'Small'
     END AS city_size_category
 FROM metrics m
-LEFT JOIN yearly_growth yg ON m.region_id = yg.region_id AND m.year = yg.year
+LEFT JOIN yearly_growth yg ON m.region_id = yg.region_id AND m.metric_year = yg.metric_year
 LEFT JOIN long_term_appreciation la ON m.region_id = la.region_id
 CROSS JOIN size_rank_stats s

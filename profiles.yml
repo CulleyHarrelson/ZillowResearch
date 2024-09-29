@@ -2,6 +2,11 @@ zillow_research:
   target: dev
   outputs:
     dev:
+      type: dbt_cloud
+      account_id: 126987
+      project-id: 381743
+      token: dbtu_INeKzcIC6nSJKvv9VPOhpaHIV8c61FO3Pq3BlpuvZAyqgkzfD0
+    local:
       type: postgres
       host: "localhost"
       user: "{{ env_var('DBT_USER') }}"

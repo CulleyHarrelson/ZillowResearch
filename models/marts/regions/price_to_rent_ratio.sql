@@ -1,11 +1,11 @@
 WITH home_values AS (
     SELECT *
-    FROM {{ ref('region_home_values') }}
+    FROM {{ ref('home_values') }}
 ),
 
 rentals AS (
     SELECT *
-    FROM {{ ref('region_rental_prices') }}
+    FROM {{ ref('rental_prices') }}
 ),
 
 combined_data AS (

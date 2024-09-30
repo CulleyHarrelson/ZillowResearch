@@ -4,8 +4,6 @@ WITH unioned_data AS (
     {{ dbt_utils.union_relations(
         relations=[
             ref('home_values'),
-            ref('price_to_rent_ratio'),
-            ref('rental_prices'),
         ],
         source_column_name=None,
         include=[

@@ -1,4 +1,4 @@
 {{ config(materialized='view') }}
 
-    select 'test' as test_col
-
+select *
+from {{ source('zillow_research', 'raw_home_values') }}

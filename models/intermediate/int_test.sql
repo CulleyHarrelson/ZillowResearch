@@ -1,5 +1,5 @@
 {{ config(materialized='view') }}
 
     select *
-    from {{ source('awsdatacatalog', 'zillow_research') }}
+    from {{ source('awsdatacatalog', 'raw_home_values') }}
 

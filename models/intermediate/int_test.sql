@@ -1,5 +1,5 @@
 {{ config(materialized='view') }}
 
-    select *
+    select RegionID
     from {{ source('awsdatacatalog', 'raw_home_values') }}
 

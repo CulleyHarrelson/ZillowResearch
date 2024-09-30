@@ -8,5 +8,6 @@ seeds
 dbt_packages/
 .user.yml
 test.sql
+packages.yml
 
 .ipynb_checkpoints/

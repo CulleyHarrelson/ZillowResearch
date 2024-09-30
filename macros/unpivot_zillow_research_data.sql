@@ -9,40 +9,40 @@
 
 WITH stg_data AS (
     SELECT DISTINCT
-        `regionid`,
-        `sizerank`,
-        `regionname`,
-        `regiontype`,
-        `statename`,
-        `state`,
-        `metro`,
-        `countyname`,
-        `city`,
-        `statecodefips`,
-        `municipalcodefips`,
-        `id`,
+        "regionid",
+        "sizerank",
+        "regionname",
+        "regiontype",
+        "statename",
+        "state",
+        "metro",
+        "countyname",
+        "city",
+        "statecodefips",
+        "municipalcodefips",
+        "id",
         {% for column in column_names %}
-            `{{ column }}` as `{{ column }}`{% if not loop.last %},{% endif %}
+            "{{ column }}" as "{{ column }}"{% if not loop.last %},{% endif %}
         {% endfor %}
     FROM {{ source_table }}
 )
 
 {% for column in column_names %}
     select
-        `regionid`,
-        `sizerank`,
-        `regionname`,
-        `regiontype`,
-        `statename`,
-        `state`,
-        `metro`,
-        `countyname`,
-        `city`,
-        `statecodefips`,
-        `municipalcodefips`,
-        `id`,
+        "regionid",
+        "sizerank",
+        "regionname",
+        "regiontype",
+        "statename",
+        "state",
+        "metro",
+        "countyname",
+        "city",
+        "statecodefips",
+        "municipalcodefips",
+        "id",
         '{{ column }}' as metric_date,
-        `{{ column }}` as metric_value
+        "{{ column }}" as metric_value
     from stg_data
     {% if not loop.last %}
     UNION ALL

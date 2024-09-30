@@ -1,6 +1,6 @@
 {% macro unpivot_zillow_research_data(table_name) %}
 
-{%- set source_table = source('raw', table_name) -%}
+{%- set source_table = source('awsdatacatalog', table_name) -%}
 {%- set columns = adapter.get_columns_in_relation(source_table) -%}
 {%- set column_names = dbt_utils.get_filtered_columns_in_relation(
     from=source_table,

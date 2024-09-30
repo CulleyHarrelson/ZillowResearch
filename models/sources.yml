@@ -1,4 +1,4 @@
 sources:
-  - name: raw
+  - name: awsdatacatalog
     tables:
       - name: raw_home_values

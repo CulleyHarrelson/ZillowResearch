@@ -5,9 +5,9 @@ WITH home_values AS (
 
 size_rank_stats AS (
     SELECT
-        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY CAST(size_rank AS INTEGER)) AS p25_rank,
-        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY CAST(size_rank AS INTEGER)) AS p50_rank,
-        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY CAST(size_rank AS INTEGER)) AS p75_rank
+        APPROX_PERCENTILE(CAST(size_rank AS BIGINT), 0.25) AS p25_rank,
+        APPROX_PERCENTILE(CAST(size_rank AS BIGINT), 0.5) AS p50_rank,
+        APPROX_PERCENTILE(CAST(size_rank AS BIGINT), 0.75) AS p75_rank
     FROM home_values
 ),
 
@@ -19,10 +19,10 @@ metrics AS (
         region_type,
         state_name,
         DATE_TRUNC('year', CAST(metric_date AS DATE)) AS metric_year,
-        AVG(CAST(metric_value AS FLOAT)) AS avg_home_value,
-        LAG(AVG(CAST(metric_value AS FLOAT))) OVER (PARTITION BY region_id ORDER BY DATE_TRUNC('year', CAST(metric_date AS DATE))) AS prev_year_avg_home_value,
-        MIN(CAST(metric_value AS FLOAT)) AS min_home_value,
-        MAX(CAST(metric_value AS FLOAT)) AS max_home_value
+        AVG(CAST(metric_value AS DOUBLE)) AS avg_home_value,
+        LAG(AVG(CAST(metric_value AS DOUBLE))) OVER (PARTITION BY region_id ORDER BY DATE_TRUNC('year', CAST(metric_date AS DATE))) AS prev_year_avg_home_value,
+        MIN(CAST(metric_value AS DOUBLE)) AS min_home_value,
+        MAX(CAST(metric_value AS DOUBLE)) AS max_home_value
     FROM home_values
     GROUP BY 1, 2, 3, 4, 5, 6
 ),
@@ -51,9 +51,9 @@ SELECT
     yg.yoy_growth_rate,
     la.total_appreciation,
     CASE 
-        WHEN CAST(m.size_rank AS INTEGER) <= s.p25_rank THEN 'Very Large'
-        WHEN CAST(m.size_rank AS INTEGER) <= s.p50_rank THEN 'Large'
-        WHEN CAST(m.size_rank AS INTEGER) <= s.p75_rank THEN 'Medium'
+        WHEN CAST(m.size_rank AS BIGINT) <= s.p25_rank THEN 'Very Large'
+        WHEN CAST(m.size_rank AS BIGINT) <= s.p50_rank THEN 'Large'
+        WHEN CAST(m.size_rank AS BIGINT) <= s.p75_rank THEN 'Medium'
         ELSE 'Small'
     END AS city_size_category
 FROM metrics m

@@ -3,7 +3,7 @@
 SELECT DISTINCT
     regionid AS region_id,
     sizerank AS size_rank,
-    regionname AS region_name,
+    REGEXP_REPLACE(regionname, '^0+', '') AS region_name,
     regiontype AS region_type,
     statename AS state_name,
     state,

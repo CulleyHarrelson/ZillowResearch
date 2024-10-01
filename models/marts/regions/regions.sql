@@ -1,9 +1,15 @@
 {{ config(materialized='table') }}
 
 SELECT DISTINCT
-    regionid as region_id,
-    sizerank as size_rank,
-    regionname as region_name,
-    regiontype as region_type,
-    statename as state_name
+    regionid AS region_id,
+    sizerank AS size_rank,
+    regionname AS region_name,
+    regiontype AS region_type,
+    statename AS state_name,
+    state,
+    metro,
+    countyname AS count_name,
+    city,
+    statecodefips AS state_code_fips,
+    municipalcodefips AS municipal_code_fips
 FROM {{ source('zillow_research', 'raw_regions') }}

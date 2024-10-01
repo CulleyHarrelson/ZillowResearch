@@ -18,13 +18,8 @@ clean-targets:
 
 models:
   zillow_research:
-    intermediate:
-      +materialized: table
-      int_region_home_values:
-
     marts:
       +materialized: table
-      marts_region_home_values:
       regions:
 
 vars:

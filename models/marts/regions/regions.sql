@@ -10,7 +10,7 @@ SELECT DISTINCT
     metro,
     countyname AS count_name,
     city,
-    statecodefips AS state_code_fips,
+    REGEXP_REPLACE(statecodefips, '\.0$', '') AS state_code_fips,
     municipalcodefips AS municipal_code_fips
 FROM {{ source('zillow_research', 'raw_regions') }}
 WHERE metro not like '"%'

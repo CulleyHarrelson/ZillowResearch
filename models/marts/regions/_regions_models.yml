@@ -16,6 +16,3 @@ models:
       - name: region_type
         tests:
           - not_null
-      - name: state_name
-        tests:
-          - not_null

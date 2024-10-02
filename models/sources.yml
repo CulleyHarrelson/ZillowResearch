@@ -2,3 +2,4 @@ sources:
   - name: zillow_research
     tables:
       - name: raw_regions
+      - name: raw_regions_home_values

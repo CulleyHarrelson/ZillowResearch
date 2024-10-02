@@ -11,7 +11,7 @@ SELECT DISTINCT
     statename AS state_name,
     state,
     metro,
-    countyname AS count_name,
+    countyname AS county_name,
     city,
     REGEXP_REPLACE(statecodefips, '\.0$', '') AS state_code_fips,
     municipalcodefips AS municipal_code_fips

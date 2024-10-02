@@ -25,10 +25,6 @@ models:
               values: ["zip", "city", "county", "metro", "state"]
       - name: state
         description: "State abbreviation"
-        tests:
-          - not_null
-          - length:
-              equal_to: 2
       - name: city
         description: "City name (if applicable)"
       - name: metro

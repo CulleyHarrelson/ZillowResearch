@@ -139,16 +139,16 @@ def extract_home_values(df):
 
 # Read all CSV files in a directory
 all_files = glob.glob("../data/*.csv")
+output_dir = "../data/"
 
 # Initialize empty lists for regions and home values dataframes
 regions_list = []
 home_values_list = []
 
-# Process each CSV file
 for file in all_files:
     try:
         df = pd.read_csv(file, low_memory=False)
-        # df = normalize_and_uniquify_column_names(df)
+        df = normalize_and_uniquify_column_names(df)  # Apply normalization here
 
         # Extract regions
         regions_df = extract_regions(df)
@@ -176,16 +176,15 @@ regions_df = convert_all_columns_to_string(regions_df)
 # Process home values dataset
 home_values_df = process_home_values(home_values_df)
 
-# Define the output directory and filenames
-output_dir = "../data"
-regions_file = "regions.parquet"
-home_values_file = "regions_home_values.parquet"
+# Print column names for debugging
+print("Regions DataFrame columns:")
+print(regions_df.columns)
+print("\nHome Values DataFrame columns:")
+print(home_values_df.columns)
 
-# Ensure the output directory exists
-os.makedirs(output_dir, exist_ok=True)
+# ... [rest of the script remains unchanged] ...
 
-
-# Define schemas
+# Define schemas with lowercase column names
 regions_schema = pa.schema(
     [
         ("regionid", pa.string()),
@@ -231,14 +230,16 @@ home_values_table = convert_to_parquet_table(home_values_df, home_values_schema)
 
 
 # Write Parquet files with schemas
-pq.write_table(regions_table, os.path.join(output_dir, regions_file))
-pq.write_table(home_values_table, os.path.join(output_dir, home_values_file))
+pq.write_table(regions_table, os.path.join(output_dir, "regions.parquet"))
+pq.write_table(
+    home_values_table, os.path.join(output_dir, "regions_home_values.parquet")
+)
 
 print(
-    f"Regions Parquet file created successfully at {os.path.join(output_dir, regions_file)}"
+    f"Regions Parquet file created successfully at {os.path.join(output_dir, 'regions.parquet')}"
 )
 print(
-    f"Home Values Parquet file created successfully at {os.path.join(output_dir, home_values_file)}"
+    f"Home Values Parquet file created successfully at {os.path.join(output_dir, 'regions_home_values.parquet')}"
 )
 
 print(f"\nRegions dataset:")

@@ -2,36 +2,66 @@ version: 2
 
 models:
   - name: regions
+    description: "Core dimension table containing information about various geographical regions"
     columns:
       - name: region_id
+        description: "Unique identifier for each region"
         tests:
           - unique
           - not_null
       - name: size_rank
+        description: "Rank of the region based on its size"
         tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 1000
       - name: region_name
+        description: "Name of the region"
         tests:
           - not_null
       - name: region_type
+        description: "Type of region (e.g., zip, city, county, metro, state)"
         tests:
           - not_null
+          - accepted_values:
+              values: ["zip", "city", "county", "metro", "state"]
+      - name: state
+        description: "State abbreviation"
+        tests:
+          - not_null
+          - length:
+              equal_to: 2
+      - name: city
+        description: "City name (if applicable)"
+      - name: metro
+        description: "Metropolitan area name (if applicable)"
+      - name: county_name
+        description: "County name (if applicable)"
 
   - name: regions_home_values
+    description: "Fact table containing home value data for each region over time"
     columns:
       - name: region_id
+        description: "Foreign key to regions table"
         tests:
           - not_null
           - relationships:
               to: ref('regions')
               field: region_id
       - name: month_end_date
+        description: "End date of the month for which the home value is recorded"
         tests:
           - not_null
       - name: home_value
+        description: "Zillow Home Value Index (ZHVI) for the region and date"
         tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000000 # Adjust based on your data
       - name: yoy_growth_rate
+        description: "Year-over-year growth rate of home values"
         tests:
           - accepted_values:
               values: [null]
@@ -42,16 +72,126 @@ models:
               or_equal_to: true
 
   - name: regions_date_spine
+    description: "Date dimension table for time-based analysis"
     columns:
       - name: month_end_date
+        description: "End date of each month"
         tests:
           - unique
           - not_null
       - name: year_number
+        description: "Year of the date"
         tests:
           - not_null
+      - name: month_number
+        description: "Month number (1-12)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      - name: quarter_number
+        description: "Quarter number (1-4)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4]
       - name: season_name
+        description: "Season name"
         tests:
           - not_null
           - accepted_values:
               values: ["Winter", "Spring", "Summer", "Fall"]
+
+  - name: regions_size_rank_analysis
+    description: "Analysis of home values and growth rates by size rank"
+    columns:
+      - name: region_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('regions')
+              field: region_id
+      - name: size_rank
+        tests:
+          - not_null
+      - name: avg_home_value
+        description: "Average home value for the size rank"
+        tests:
+          - not_null
+      - name: avg_growth_rate
+        description: "Average year-over-year growth rate for the size rank"
+      - name: median_home_value
+        description: "Median home value for the size rank"
+        tests:
+          - not_null
+
+  - name: regions_volatility_analysis
+    description: "Analysis of price volatility in different regions"
+    columns:
+      - name: region_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('regions')
+              field: region_id
+      - name: price_volatility
+        description: "Standard deviation of year-over-year growth rates"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
+      - name: volatility_category
+        description: "Categorization of volatility (Low, Medium, High)"
+        tests:
+          - accepted_values:
+              values: ["Low", "Medium", "High"]
+
+  - name: regions_geographic_comparison
+    description: "Comparison of home values and growth rates across geographic levels"
+    columns:
+      - name: region_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('regions')
+              field: region_id
+      - name: state_avg_home_value
+        description: "Average home value for the state"
+        tests:
+          - not_null
+      - name: metro_avg_home_value
+        description: "Average home value for the metro area"
+        tests:
+          - not_null
+      - name: state_value_diff_pct
+        description: "Percentage difference from state average home value"
+      - name: metro_value_diff_pct
+        description: "Percentage difference from metro average home value"
+
+  - name: regions_time_series
+    description: "Time series analysis of home values and growth rates"
+    columns:
+      - name: region_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('regions')
+              field: region_id
+      - name: year_number
+        tests:
+          - not_null
+      - name: avg_home_value
+        description: "Average home value for the year"
+        tests:
+          - not_null
+      - name: max_home_value
+        description: "Maximum home value for the year"
+        tests:
+          - not_null
+      - name: min_home_value
+        description: "Minimum home value for the year"
+        tests:
+          - not_null
+      - name: avg_yoy_growth_rate
+        description: "Average year-over-year growth rate for the year"

@@ -20,7 +20,8 @@ models:
   zillow_research:
     marts:
       +materialized: table
-      regions:
+    intermediate:
+      +materialized: view
 
 vars:
   source_database: "zillow_research"

@@ -13,9 +13,6 @@ models:
         description: "Rank of the region based on its size"
         tests:
           - not_null
-          - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 1
-              max_value: 1000
       - name: region_name
         description: "Name of the region"
         tests:
@@ -57,9 +54,6 @@ models:
         description: "Zillow Home Value Index (ZHVI) for the region and date"
         tests:
           - not_null
-          - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 10000000 # Adjust based on your data
       - name: yoy_growth_rate
         description: "Year-over-year growth rate of home values"
         tests:

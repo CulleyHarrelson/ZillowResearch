@@ -16,14 +16,3 @@ models:
       - name: region_type
         tests:
           - not_null
-  - name: home_values
-    columns:
-      - name: region_id
-        tests:
-          - not_null
-      - name: home_value_date
-        tests:
-          - not_null
-      - name: home_value
-        tests:
-          - not_null

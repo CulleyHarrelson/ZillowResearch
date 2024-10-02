@@ -28,8 +28,8 @@ final AS (
     SELECT
         hv.region_id,
         r.region_name,
+        r.region_type,
         r.state,
-        r.state_name,
         r.city,
         r.metro,
         r.county_name,

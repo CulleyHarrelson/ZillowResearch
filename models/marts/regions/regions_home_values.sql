@@ -41,12 +41,12 @@ final AS (
         ds.season_name,
         hv.home_value,
         pyv.previous_year_value,
-        CASE 
+        CASE
             WHEN pyv.previous_year_value IS NOT NULL AND pyv.previous_year_value != 0 
             THEN (hv.home_value - pyv.previous_year_value) / pyv.previous_year_value 
-            ELSE NULL 
+            ELSE NULL
         END AS yoy_growth_rate
-    FROM home_values hv
+    FROM home_values AS hv
     JOIN regions r ON hv.region_id = r.region_id
     JOIN date_spine ds ON hv.home_value_date = ds.month_end_date
     LEFT JOIN previous_year_values pyv ON hv.region_id = pyv.region_id AND hv.home_value_date = pyv.home_value_date

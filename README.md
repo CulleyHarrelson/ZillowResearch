@@ -63,7 +63,7 @@ To get started with this project:
 
 ## Contributing
 
-If you'd like to contribute to this project, please fork the repository and create a pull request with your changes.
+Models could be expanded for additional Zillow Research datasets, and models could be forked for Athena alternatives.
 
 ## License
 

@@ -2,7 +2,7 @@
 
 WITH base AS (
     SELECT *
-    FROM {{ ref('regional_home_values') }}
+    FROM {{ ref('regions_home_values') }}
 ),
 
 size_rank_metrics AS (

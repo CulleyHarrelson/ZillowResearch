@@ -26,7 +26,7 @@ previous_year_values AS (
 
 final AS (
     SELECT
-        r.region_id,
+        hv.region_id,
         r.region_name,
         r.state,
         r.state_name,
@@ -46,8 +46,8 @@ final AS (
             THEN (hv.home_value - pyv.previous_year_value) / pyv.previous_year_value 
             ELSE NULL 
         END AS yoy_growth_rate
-    FROM regions r
-    JOIN home_values hv ON r.region_id = hv.region_id
+    FROM home_values hv
+    JOIN regions r ON hv.region_id = r.region_id
     JOIN date_spine ds ON hv.home_value_date = ds.month_end_date
     LEFT JOIN previous_year_values pyv ON hv.region_id = pyv.region_id AND hv.home_value_date = pyv.home_value_date
 )

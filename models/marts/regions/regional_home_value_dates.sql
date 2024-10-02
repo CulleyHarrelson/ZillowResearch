@@ -2,16 +2,16 @@
 
 WITH date_spine AS (
     SELECT DISTINCT home_value_date AS month_end_date
-    FROM {{ ref('int_regions_home_values_cleaned') }}
+    FROM {{ ref('home_values') }}
 )
 SELECT
     month_end_date,
     DATE_TRUNC('month', month_end_date) AS month_start_date,
-    format_datetime(month_end_date, '%Y-%m') AS month_key,
+    format_datetime(month_end_date, 'yyyy-MM') AS month_key,
     CAST(year(month_end_date) AS INTEGER) AS year_number,
     CAST(month(month_end_date) AS INTEGER) AS month_number,
-    format_datetime(month_end_date, '%B') AS month_full_name,
-    format_datetime(month_end_date, '%b') AS month_short_name,
+    format_datetime(month_end_date, 'MMMM') AS month_full_name,
+    format_datetime(month_end_date, 'MMM') AS month_short_name,
     CAST(quarter(month_end_date) AS INTEGER) AS quarter_number,
     DATE_TRUNC('quarter', month_end_date) AS quarter_start_date,
     DATE_TRUNC('year', month_end_date) AS year_start_date,

@@ -2,7 +2,7 @@
 
 WITH date_spine AS (
     SELECT DISTINCT home_value_date AS month_end_date
-    FROM {{ ref('home_values') }}
+    FROM {{ ref('int_regions_home_values_cleaned') }}
 )
 SELECT
     month_end_date,

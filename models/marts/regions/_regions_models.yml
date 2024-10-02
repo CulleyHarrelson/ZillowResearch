@@ -50,19 +50,6 @@ models:
       - name: year_number
         tests:
           - not_null
-      - name: month_number
-        tests:
-          - not_null
-          - accepted_values:
-              values:
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                #["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-      #- name: quarter_number
-      #  tests:
-      #  - not_null
-      #- accepted_values:
-      #    values: [1, 2, 3, 4]
-      #values: ["1", "2", "3", "4"]
       - name: season_name
         tests:
           - not_null

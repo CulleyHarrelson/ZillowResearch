@@ -1,5 +1,5 @@
 sources:
-  - name: zillow_research
+  - name: raw_data
     tables:
-      - name: raw_regions
-      - name: raw_home_values
+      - name: regions
+      - name: regions_home_values

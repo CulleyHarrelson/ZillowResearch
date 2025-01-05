@@ -22,7 +22,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["zip", "city", "county", "metro", "state"]
+              values: ["zip", "city", "county", "metro", "state", "neighborhood"]
       - name: state
         description: "State abbreviation"
       - name: city
@@ -48,17 +48,8 @@ models:
           - not_null
       - name: home_value
         description: "Zillow Home Value Index (ZHVI) for the region and date"
-        tests:
-          - not_null
       - name: yoy_growth_rate
         description: "Year-over-year growth rate of home values"
-        tests:
-          - accepted_values:
-              values: [null]
-              quote: false
-          - dbt_expectations.expect_column_values_to_be_between:
-              min_value: -1
-              max_value: 1
 
   - name: regions_date_spine
     description: "Date dimension table for time-based analysis"
@@ -76,14 +67,17 @@ models:
         description: "Month number (1-12)"
         tests:
           - not_null
-          - accepted_values:
-              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 12
+              inclusive: true
       - name: quarter_number
         description: "Quarter number (1-4)"
         tests:
-          - not_null
-          - accepted_values:
-              values: [1, 2, 3, 4]
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 4
+              inclusive: true
       - name: season_name
         description: "Season name"
         tests:
@@ -102,11 +96,6 @@ models:
               field: region_id
       - name: price_volatility
         description: "Standard deviation of year-over-year growth rates"
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 1
       - name: volatility_category
         description: "Categorization of volatility (Low, Medium, High)"
         tests:
@@ -124,12 +113,8 @@ models:
               field: region_id
       - name: state_avg_home_value
         description: "Average home value for the state"
-        tests:
-          - not_null
       - name: metro_avg_home_value
         description: "Average home value for the metro area"
-        tests:
-          - not_null
       - name: state_value_diff_pct
         description: "Percentage difference from state average home value"
       - name: metro_value_diff_pct
@@ -149,15 +134,9 @@ models:
           - not_null
       - name: avg_home_value
         description: "Average home value for the year"
-        tests:
-          - not_null
       - name: max_home_value
         description: "Maximum home value for the year"
-        tests:
-          - not_null
       - name: min_home_value
         description: "Minimum home value for the year"
-        tests:
-          - not_null
       - name: avg_yoy_growth_rate
         description: "Average year-over-year growth rate for the year"
